@@ -1,7 +1,7 @@
 Package: lpcde
 Type: Package
 Title: Boundary Adaptive Local Polynomial Conditional Density Estimator
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person(given = "Rajita",
            family = "Chandak",
            role = c("aut", "cre"),
@@ -19,7 +19,7 @@ LinkingTo: Rcpp, RcppArmadillo
 Suggests: testthat (>= 3.0.0), covr
 Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2022-08-11 14:39:31 UTC; rajitachandak
+Packaged: 2023-09-01 18:31:42 UTC; rajitachandak
 Author: Rajita Chandak [aut, cre]
 Repository: CRAN
-Date/Publication: 2022-08-11 15:50:02 UTC
+Date/Publication: 2023-09-01 18:50:02 UTC
