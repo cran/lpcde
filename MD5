@@ -1,12 +1,12 @@
-90934723620fa772fc3ec68303d1c4c3 *DESCRIPTION
+10ab4587c111a3b5128a415382f4861f *DESCRIPTION
 dfdf5ba5bfddabd8eda498774079e157 *NAMESPACE
-e6e95c1fd911d77660a2beb98e6a5cee *NEWS.md
+9481f397ba1afa4696b80c4deb5f2e6c *NEWS.md
 a9f5e540c56504b453b3a7e34ae40071 *R/RcppExports.R
-f78d1cb1b845ed5bb1852fce4e41f2d8 *R/lpbwcde.R
+8c01b4be4a58fcde3f27e16d0b06e3f7 *R/lpbwcde.R
 a403aafc8ae8b3380df4310dc9401aee *R/lpbwcde_fns.R
 155893811aecc715c31a828702aa38e2 *R/lpbwcde_methods.R
 4b04849bbfdb773af41d4dc030a3b131 *R/lpcde-package.R
-133b6452c62471c58fc4c70160a53acc *R/lpcde.R
+3d5c35f8a250c05c08557d52c3ad38ec *R/lpcde.R
 460e749d4db6eb7c1e45933a49cd1e58 *R/lpcde_fns.R
 94fb9865e633b96e6c7568040b1c489a *R/lpcde_methods.R
 17f10e2dc8e067289cb4c576da425057 *R/matrices.R
@@ -33,8 +33,8 @@ c1bc3c779bc66225f9e6565436d80ce3 *man/confint.lpcde.Rd
 c4524ac687055555545d0ac5c09b076a *man/fhat.Rd
 dce89b3a9d4119a4f55f7741fef872eb *man/int_val.Rd
 b625421a9bfa9c069bee2a81b7e7ad65 *man/kernel_eval.Rd
-ed2b37fa7e8fe187f2d9c44ab96f7599 *man/lpbwcde.Rd
-c63ee0970351438052b016e774dc6a1d *man/lpcde.Rd
+b265f9c811b2c0a7d4167571de374d31 *man/lpbwcde.Rd
+a576fc9b2b009ec58446919bbab936ba *man/lpcde.Rd
 a844216ea963fed0deb310aeec1f39b7 *man/lpcde_fn.Rd
 4845a47f020f85940c2c7b87e66079e8 *man/mvec.Rd
 f44f9a5d63190041cfd1e45b2f99355d *man/normal_dgps.Rd
@@ -50,7 +50,7 @@ a2da9477c81bece80aefe2e00b7fc319 *man/vcov.lpcde.Rd
 0317ab7fc2860b926c46a1f51333fdef *src/Makevars.win
 0b21ea0dc2eb2713b22a3b736a2dc075 *src/RcppExports.cpp
 2132dc7ce98b9e60a6d0f01926944e70 *src/utilsC.cpp
-a3e042bba5625320f6d2d6efdc3d73c8 *tests/test.R
+eb002cd54a9e315fa2742d3b09df9516 *tests/test.R
 b9576e355196bad8d9d337d2acf95548 *tests/testthat.R
 a2511a49b22f2449aa66f5f09755bb54 *tests/testthat/test-lpbwcde.R
 18e197d665597a238b5e8329e1723b06 *tests/testthat/test-lpcde.R
