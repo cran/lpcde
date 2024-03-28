@@ -2,10 +2,10 @@
 # This file contains code for generating conditional density estimate (External Functions)
 ############################################################################################
 
-#' @title Local Polynomial Conditional Density Estimation
+#' @title Local polynomial conditional density estimation
 #' @description \code{\link{lpcde}} implements the local polynomial regression based
 #' conditional density (and derivatives). The estimator proposed in
-#' Chandak, Cattaneo, Jansson and Ma.
+#' \insertCite{bernoulli}{lpcde}.
 #' Robust bias-corrected inference methods, both pointwise (confidence intervals) and
 #' uniform (confidence bands), are also implemented.
 #' @param x_data Numeric matrix/data frame, the raw data of covariates.
@@ -41,10 +41,10 @@
 #'   bandwidth selected for each grid point)
   # or (2) \code{"mse-rot"} (rule-of-thumb bandwidth with Gaussian
   # reference model).
-#' @param ng int. number of grid points to be used. generates evenly space points over the support of the data.
-#' @param grid_spacing String. If equal to "quantile" will generate quantile-spaced grid evaluation points, otherwise will generate equally spaced points.
-#' @param normalize Boolean. False (default) returns original estimator, True normalizes estimates to integrate to 1.
-#' @param nonneg Boolean. False (default) returns original estimator, True returns maximum of estimate and 0.
+#' @param ng Int, number of grid points to be used. generates evenly space points over the support of the data.
+#' @param grid_spacing String, If equal to "quantile" will generate quantile-spaced grid evaluation points, otherwise will generate equally spaced points.
+#' @param normalize Boolean, False (default) returns original estimator, True normalizes estimates to integrate to 1.
+#' @param nonneg Boolean, False (default) returns original estimator, True returns maximum of estimate and 0.
 #' @return
 #' \item{Estimate}{ A matrix containing (1) \code{grid} (grid points),\cr
 #' (2) \code{bw} (bandwidths),\cr
@@ -85,10 +85,26 @@
 #'
 #' Xinwei Ma, University of California San Diego. \email{x1ma@ucsd.edu}.
 #'
-#'  Supported methods: \code{\link{coef.lpcde}}, \code{\link{confint.lpcde}},
+#' @seealso Supported methods: \code{\link{coef.lpcde}}, \code{\link{confint.lpcde}},
 #' \code{\link{plot.lpcde}}, \code{\link{print.lpcde}},
 #' \code{\link{summary.lpcde}}, \code{\link{vcov.lpcde}}
 #'
+#'
+#' @examples
+#' #Density estimation example
+#' n=500
+#' x_data = matrix(rnorm(n, mean=0, sd=1))
+#' y_data = matrix(rnorm(n, mean=x_data, sd=1))
+#' y_grid = seq(from=-1, to=1, length.out=5)
+#' model1 = lpcde::lpcde(x_data=x_data, y_data=y_data, y_grid=y_grid, x=0, bw=0.5)
+#' #summary of estimation
+#' summary(model1)
+#'
+#' @references
+#' \insertRef{bernoulli}{lpcde}\cr
+#' \insertRef{JASA}{lpcde}\cr
+#' \insertRef{rbc}{lpcde}\cr
+#' \insertRef{lpdensitypaper}{lpcde}
 #' @export
 lpcde = function(x_data, y_data, y_grid=NULL, x=NULL, bw=NULL, p=NULL, q=NULL,
                  p_RBC=NULL, q_RBC=NULL, mu=NULL, nu=NULL, rbc = TRUE, ng=NULL,
@@ -122,12 +138,12 @@ lpcde = function(x_data, y_data, y_grid=NULL, x=NULL, bw=NULL, p=NULL, q=NULL,
     stop("Data should be numeric, and cannot be empty.\n")
   }
 
-  sd_y = stats::sd(y_data)
-  sd_x = apply(x_data, 2, stats::sd)
-  mx = apply(x_data, 2, mean)
-  my = mean(y_data)
-  y_data = (y_data)/sd_y
-  x_data = x_data/sd_x
+  #sd_y = stats::sd(y_data)
+  #sd_x = apply(x_data, 2, stats::sd)
+  #mx = apply(x_data, 2, mean)
+  #my = mean(y_data)
+  #y_data = (y_data)/sd_y
+  #x_data = x_data/sd_x
   # grid
   if (length(y_grid) == 0) {
     if(grid_spacing=="quantile"){
@@ -250,7 +266,7 @@ lpcde = function(x_data, y_data, y_grid=NULL, x=NULL, bw=NULL, p=NULL, q=NULL,
       bw = lpbwcde(y_data=y_data, x_data=x_data, x=x, y_grid=y_grid, p=p, q=q, mu=mu,
                    nu=nu, kernel_type=kernel_type, bw_type=bw_type)$BW[,2]
     }
-    if (!bw_type%in%c("mse-dpi", "imse-dpi", "mse-rot", "imse-rot")) {
+    if (!bw_type%in%c("mse-rot", "imse-rot")) {
       stop("Incorrect bandwidth selection method specified.\n")
     }
   } else if (length(bw) == 1) {

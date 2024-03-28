@@ -1,9 +1,9 @@
 ##################################################################################################
-#' @title Data-driven Bandwidth Selection for Local Polynomial Conditional Density Estimators
+#' @title Data-driven bandwidth selection for local polynomial conditional density estimators
 #'
 #' @description  \code{\link{lpbwcde}} implements the bandwidth selection methods for local
 #'   polynomial based conditionaldensity (and derivatives) estimation proposed and studied
-#'   in Cattaneo, Chandak, Jansson and Ma (2021).
+#'   in \insertCite{bernoulli}{lpcde}.
 #'
 #'   Companion command: \code{\link{lpcde}} for estimation and robust bias-corrected inference.
 #'
@@ -24,8 +24,8 @@
 #' \code{1} (default) for the density funtion, etc.
 #' @param nu Nonnegative integer, specifies the derivative with respect to \code{X} of the
 #' distribution function to be estimated.
-#' @param grid_spacing String. If equal to "quantile" will generate quantile-spaced grid evaluation points, otherwise will generate equally spaced points.
-#' @param ng int. number of grid points to be used in generating bandwidth estimates.
+#' @param grid_spacing String, If equal to "quantile" will generate quantile-spaced grid evaluation points, otherwise will generate equally spaced points.
+#' @param ng Int, number of grid points to be used in generating bandwidth estimates.
 #' @param kernel_type String, specifies the kernel function, should be one of
 #' \code{"triangular"}, \code{"uniform"} or \code{"epanechnikov"}.
 #' @param bw_type String, specifies the method for data-driven bandwidth selection. This option will be
@@ -49,8 +49,8 @@
 #'
 #' Xinwei Ma, University of California San Diego. \email{x1ma@ucsd.edu}.
 #'
-# @seealso Supported methods: \code{\link{coef.lpbwdensity}},
-# \code{\link{print.lpbwdensity}}, \code{\link{summary.lpbwdensity}}.
+#' @seealso Supported methods: \code{\link{coef.lpbwcde}},
+#' \code{\link{print.lpbwcde}}, \code{\link{summary.lpbwcde}}.
 #'
 #' @examples
 #' # Generate a random sample
@@ -65,6 +65,9 @@
 #'
 #' # Display bandwidths for a subset of y_grid points
 #' summary(bw1, y_grid=bw1$BW[2:5, "y_grid"])
+#'
+#' @references
+#' \insertRef{bernoulli}{lpcde}
 #'
 #' @export
 #'
@@ -103,6 +106,7 @@ lpbwcde <- function(y_data, x_data, x, y_grid=NULL, p=NULL, q=NULL, grid_spacing
   my = mean(y_data)
   y_data = (y_data)/sd_y
   x_data = x_data/sd_x
+  x = (x-mx)/sd_x
   # y_grid and x_grid
   if (length(y_grid) == 0) {
     if(grid_spacing=="quantile"){
@@ -195,7 +199,7 @@ lpbwcde <- function(y_data, x_data, x, y_grid=NULL, p=NULL, q=NULL, grid_spacing
   } else {
    bw_type = tolower(bw_type)
    bw_type = bw_type[1]
-   if (!bw_type%in%c("mse-rot", "imse-rot", "mse-dpi", "imse-dpi")){
+   if (!bw_type%in%c("mse-rot", "imse-rot")){
      stop("Incorrect bandwidth selection method specified.\n")
    }
   }
@@ -232,27 +236,11 @@ lpbwcde <- function(y_data, x_data, x, y_grid=NULL, p=NULL, q=NULL, grid_spacing
   }else if(bw_type == "imse-rot"){
     bw = bw_irot(y_data=y_data, x_data=x_data, y_grid=y_grid, x=x, p=p, q=q, mu=mu, nu=nu, kernel_type=kernel_type, regularize=regularize)
 
-  }else if(bw_type == "mse-dpi"){
-    if(d ==1){
-      bw = bw_mse(y_data=y_data, x_data=x_data, y_grid=y_grid, x=x, p=p, q=q, mu=mu, nu=nu, kernel_type=kernel_type)
-    }else{
-      stop("this method is not implementable yet")
-    }
-
-  }else if(bw_type == "imse-dpi"){
-    if(d==1){
-      bw = bw_imse(y_data=y_data, x_data=x_data, y_grid=y_grid, x=x, p=p, q=q, mu=mu, nu=nu, kernel_type=kernel_type)
-    }else{
-      stop("this method is not implementable yet")
-    }
-    # stop("this method is not implementable yet")
   }else {
     stop("Invalid bandwidth selection method provided.")
 
   }
 
-  # scaling back
-  # bw = bw
 
   BW = matrix(NA, ncol=3, nrow=ng)
   BW[, 1] = y_grid
@@ -279,7 +267,7 @@ lpbwcde <- function(y_data, x_data, x, y_grid=NULL, p=NULL, q=NULL, grid_spacing
                           data_min=min(y_data), data_max=max(y_data),
                           grid_min=min(y_grid), grid_max=max(y_grid)))
 
-  class(Result) <- c("lpbwcde", "lpcde")
+  class(Result) <- c("lpbwcde")
 
   return (Result)
 }

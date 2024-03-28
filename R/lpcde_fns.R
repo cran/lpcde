@@ -2,35 +2,39 @@
 # This file contains code for generating point estimates (Internal Functions)
 #######################################################################################
 
-#' @title lpcde_fn: conditional density estimator.
+#' @title lpcde_fn: Conditional density estimator.
 #' @description Function for estimating the density function and its derivatives.
-#' @param y_data response variable dataset, vector.
-#' @param x_data covariate dataset, vector or matrix.
+#' @param y_data Response variable dataset, vector.
+#' @param x_data Covariate dataset, vector or matrix.
 #' @param y_grid Numeric vector, specifies the grid of evaluation points along y-direction.
 #' @param x Numeric vector or matrix, specifies the grid of evaluation points along x-direction.
-#' @param p polynomial order for y.
-#' @param q polynomial order for covariates.
+#' @param p Polynomial order for y.
+#' @param q Polynomial order for covariates.
 #' @param p_RBC Nonnegative integer, specifies the order of the local polynomial for \code{Y} used to
 #' construct bias-corrected point estimates. (Default is \code{p+1}.)
 #' @param q_RBC Nonnegative integer, specifies the order of the local polynomial for \code{X} used to
 #' construct bias-corrected point estimates. (Default is \code{q+1}.)
 #' @param bw Numeric, bandwidth vector.
-#' @param mu degree of derivative with respect to y.
-#' @param nu degree of derivative with respect to x.
-#' @param kernel_type kernel function choice.
+#' @param mu Degree of derivative with respect to y.
+#' @param nu Degree of derivative with respect to x.
+#' @param kernel_type Kernel function choice.
 #' @param rbc Boolean for whether to return RBC estimate and standard errors.
 # @param var_type String. type of variance estimator to implement.
 # choose from "ustat" and "asymp".
-#' @return conditional density estimate at all grid points.
+#' @return Conditional density estimate at all grid points.
 #' @keywords internal
+#' @importFrom Rdpack reprompt
 lpcde_fn = function(y_data, x_data, y_grid, x, p, q, p_RBC, q_RBC, bw, mu, nu,
                     kernel_type, rbc = FALSE){
   sd_y = stats::sd(y_data)
   sd_x = apply(x_data, 2, stats::sd)
   mx = apply(x_data, 2, mean)
   my = mean(y_data)
-  y_data = (y_data - my)/sd_y
+  #y_data = (y_data - my)/sd_y
+  #y_grid = (y_grid-my)/sd_y
   x_data = sweep(x_data, 2, mx)/sd_x
+  x = as.matrix(x)
+  x = sweep(x, 2, mx)/sd_x
   # initializing output vectors
   est = matrix(0L, nrow = length(y_grid), ncol = 1)
   se = matrix(0L, nrow = length(y_grid), ncol = 1)
@@ -42,15 +46,13 @@ lpcde_fn = function(y_data, x_data, y_grid, x, p, q, p_RBC, q_RBC, bw, mu, nu,
   eff.n = f_hat_val$eff.n
   est_flag = f_hat_val$singular_flag
 
-  # covariance matrix
-
   # standard errors
   # if(var_type=="ustat"){
   covmat = cov_hat(x_data=x_data, y_data=y_data, x=x, y_grid=y_grid, p=p, q=q,
                    mu=mu, nu=nu, h=bw, kernel_type=kernel_type)
   covMat = covmat$cov
   c_flag = covmat$singular_flag
-  se = sqrt(abs(diag(covMat)))
+  se = sqrt(abs(diag(covMat)))*sd_y*sd_x
 
   if (rbc){
     est_rbc = matrix(0L, nrow = length(y_grid), ncol = 1)
@@ -78,7 +80,7 @@ lpcde_fn = function(y_data, x_data, y_grid, x, p, q, p_RBC, q_RBC, bw, mu, nu,
                        kernel_type=kernel_type)
       covMat_rbc = covmat_rbc$cov
       c_rbc_flag = covmat_rbc$singular_flag
-      se_rbc = sqrt(abs(diag(covMat_rbc)))
+      se_rbc = sqrt(abs(diag(covMat_rbc)))*sd_y*sd_x
     }
 
     # with rbc results
@@ -87,6 +89,8 @@ lpcde_fn = function(y_data, x_data, y_grid, x, p, q, p_RBC, q_RBC, bw, mu, nu,
     }else{
       singular_flag=FALSE
     }
+    x = x*sd_x + mx
+    #y_grid = y_grid*sd_y + my
     estimate = cbind(y_grid, bw, est, est_rbc, se, se_rbc)
     colnames(estimate) = c("y_grid","bw", "est","est_RBC", "se", "se_RBC")
     rownames(estimate) = c()
@@ -101,6 +105,8 @@ lpcde_fn = function(y_data, x_data, y_grid, x, p, q, p_RBC, q_RBC, bw, mu, nu,
     se_rbc = se
     covMat_rbc = covMat
     # generating matrices and list to return
+    x = x*sd_x + mx
+    #y_grid = y_grid*sd_y + my
     estimate = cbind(y_grid, bw, est, est_rbc, se, se_rbc)
     colnames(estimate) = c("y_grid","bw", "est","est_RBC", "se", "se_RBC")
     rownames(estimate) = c()
@@ -113,19 +119,19 @@ lpcde_fn = function(y_data, x_data, y_grid, x, p, q, p_RBC, q_RBC, bw, mu, nu,
   return(est_result)
 }
 
-#' @title fhat: estimator
+#' @title Estimator construction
 #' @description Function for estimating the density function and its derivatives.
-#' @param y_data response variable dataset, vector.
-#' @param x_data covariate dataset, vector or matrix.
+#' @param y_data Response variable dataset, vector.
+#' @param x_data Covariate dataset, vector or matrix.
 #' @param y_grid Numeric vector, specifies the grid of evaluation points along y-direction.
 #' @param x Numeric vector or matrix, specifies the grid of evaluation points along x-direction.
-#' @param p polynomial order for y.
-#' @param q polynomial order for covariates.
+#' @param p Polynomial order for y.
+#' @param q Polynomial order for covariates.
 #' @param h Numeric, bandwidth vector.
-#' @param mu degree of derivative with respect to y.
-#' @param nu degree of derivative with respect to x.
-#' @param kernel_type kernel function choice.
-#' @return conditional density estimate at all grid points.
+#' @param mu Degree of derivative with respect to y.
+#' @param nu Degree of derivative with respect to x.
+#' @param kernel_type Kernel function choice.
+#' @return Conditional density estimate at all grid points.
 #' @keywords internal
 fhat = function(x_data, y_data, x, y_grid, p, q, mu, nu, h, kernel_type){
   # setting constants
@@ -148,6 +154,7 @@ fhat = function(x_data, y_data, x, y_grid, p, q, mu, nu, h, kernel_type){
     h = h[1]
     # localization for x
     idx = which(rowSums(abs(sweep(x_data, 2, x))<=h)==d)
+    #print(x_data)
 
     x_idx = matrix(x_data[idx, ], ncol=d)
     y_idx = y_data[idx]
@@ -313,19 +320,19 @@ fhat = function(x_data, y_data, x, y_grid, p, q, mu, nu, h, kernel_type){
 
 #' @title cov_hat: covariance estimator
 #' @description Function for estimating the variance-covariance matrix.
-#' @param y_data response variable dataset, vector.
-#' @param x_data covariate dataset, vector or matrix.
+#' @param y_data Response variable dataset, vector.
+#' @param x_data Covariate dataset, vector or matrix.
 #' @param y_grid Numeric vector, specifies the grid of evaluation points along
 #' y-direction.
 #' @param x Numeric vector or matrix, specifies the grid of evaluation points
 #' along x-direction.
-#' @param p polynomial order for y.
-#' @param q polynomial order for covariates.
+#' @param p Polynomial order for y.
+#' @param q Polynomial order for covariates.
 #' @param h Numeric, bandwidth vector.
-#' @param mu degree of derivative with respect to y.
-#' @param nu degree of derivative with respect to x.
-#' @param kernel_type kernel function choice.
-#' @return covariance matrix for all the grid points
+#' @param mu Degree of derivative with respect to y.
+#' @param nu Degree of derivative with respect to x.
+#' @param kernel_type Kernel function choice.
+#' @return Covariance matrix for all the grid points
 #' @keywords internal
 cov_hat = function(x_data, y_data, x, y_grid, p, q, mu, nu, h, kernel_type){
   # setting constants
@@ -617,13 +624,13 @@ cov_hat = function(x_data, y_data, x, y_grid, p, q, mu, nu, h, kernel_type){
 # Supplemental Functions
 #######################################################################################
 
-#' @title bx = constants for each data and evaluation point pair
+#' @title bx
 #' @description Function for estimating the constants in the estimation formula
-#' @param datavec dataset, vector.
-#' @param s_mat s_hat matrix.
-#' @param q polynomial order.
-#' @param kernel_type kernel function choice.
-#' @return vector of products for each data point.
+#' @param datavec Dataset, vector.
+#' @param s_mat S_hat matrix.
+#' @param q Polynomial order.
+#' @param kernel_type Kernel function choice.
+#' @return Vector of products for each data point.
 #' @keywords internal
 b_x = function(datavec, s_mat, e_vec, q, kernel_type){
   eff_n = length(datavec[,1])

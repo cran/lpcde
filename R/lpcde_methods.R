@@ -1,5 +1,5 @@
 #######################################################################################
-#' Print Method for Local Polynomial Conditional Density Estimation and Inference
+#' Print method for local polynomial conditional density estimation
 #'
 #' @description The print method for local polynomial conditional density objects.
 #'
@@ -51,7 +51,7 @@ print.lpcde = function(x, ...){
 }
 
 #######################################################################################
-#' Summary Method for Local Polynomial Density ConditionalEstimation and Inference
+#' Summary method for local polynomial density conditional estimation
 #'
 #' @description The summary method for local polynomial conditional density objects.
 #'
@@ -229,9 +229,8 @@ summary.lpcde = function(object, ...){
 }
 
 #######################################################################################
-#' Coef Method for Local Polynomial Density Conditional Estimation and Inference
+#' Coef method for local polynomial density conditional estimation
 #'
-#' @title Coef Method
 #' @description The coef method for local polynomial conditional density objects.
 #'
 #' @param object Class "lpcde" object, obtained by calling \code{\link{lpcde}}.
@@ -270,10 +269,10 @@ coef.lpcde = function(object, ...) {
   object$Estimate
 }
 #######################################################################################
-#' Vcov Method for Local Polynomial Density Conditional Estimation and Inference
+#' Vcov method for local polynomial density conditional estimation
 #'
 #' @title Variance-Covariance
-#' @description The vcov method for local polynomial conditionaldensity objects.
+#' @description The vcov method for local polynomial conditional density objects.
 #'
 #' @param object Class "lpdensity" object, obtained by calling \code{\link{lpcde}}.
 #' @param ... Additional options.
@@ -316,7 +315,7 @@ vcov.lpcde = function(object, ...) {
 }
 
 #######################################################################################
-#' Confint Method for Local Polynomial Density Conditional Estimation and Inference
+#' Confint method for local polynomial density conditional estimation
 #'
 #' @description The confint method for local polynomial conditional density objects.
 #'
@@ -341,7 +340,7 @@ vcov.lpcde = function(object, ...) {
 #' @return
 #' \item{Estimate}{A matrix containing grid points, estimates and confidence interval end points using p- and q-th order local polynomials
 #' as well as bias-corrected estimates and corresponding confidence intervals.}
-#' \item{crit_val}{the critical value used in computing the confidence interval end points.}
+#' \item{crit_val}{The critical value used in computing the confidence interval end points.}
 #'
 #' @author
 #' Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
@@ -457,7 +456,7 @@ confint.lpcde <- function(object, parm = NULL, level = NULL, CIuniform=FALSE, CI
 }
 
 #######################################################################################
-#' @title Plot Method for Local Polynomial Density Conditional Estimation and Inference
+#' @title Plot method for local polynomial density conditional estimation
 #'
 #' @description The plot method for local polynomial density objects.
 #' A standard \code{ggplot2} object is returned, hence can be used for further customization.
@@ -504,6 +503,8 @@ confint.lpcde <- function(object, parm = NULL, level = NULL, CIuniform=FALSE, CI
 #'   accordingly.
 #' @param CIuniform \code{TRUE} or \code{FALSE} (default), plotting either pointwise confidence intervals (\code{FALSE}) or
 #'   uniform confidence bands (\code{TRUE}).
+#' @param rbc \code{TRUE} or \code{FALSE} (default), plotting confidence intervals and bands with
+#' standard estimates (\code{FALSE}) or RBC estimates (\code{TRUE}).
 #' @param CIsimul Positive integer, specifies the number of simulations used to construct critical values (default is \code{2000}). This
 #'   option is ignored if \code{CIuniform=FALSE}.
 #' @param CIshade Numeric, specifies the opaqueness of the confidence region, should be between 0 (transparent) and
@@ -540,7 +541,7 @@ plot.lpcde = function(..., alpha=NULL,type=NULL, lty=NULL, lwd=NULL, lcol=NULL,
                       pty=NULL, pwd=NULL, pcol=NULL, y_grid=NULL,CItype=NULL,
                       CIuniform=FALSE, CIsimul=2000, CIshade=NULL, CIcol=NULL,
                       title=NULL, xlabel=NULL, ylabel=NULL,
-                      legendTitle=NULL, legendGroups=NULL) {
+                      legendTitle=NULL, legendGroups=NULL, rbc=FALSE) {
 
   ########################################
   # check how many series are passed in
@@ -680,6 +681,9 @@ plot.lpcde = function(..., alpha=NULL,type=NULL, lty=NULL, lwd=NULL, lcol=NULL,
     }
   }
 
+
+
+
   # # x_grid
   # if (!is.null(x_grid)) {
   #   if (!is.numeric(x_grid)) {
@@ -744,7 +748,7 @@ plot.lpcde = function(..., alpha=NULL,type=NULL, lty=NULL, lwd=NULL, lcol=NULL,
         z_val = stats::qnorm(1 - alpha/2)
       }else {
         CIsimul = ceiling(CIsimul)
-        corrMat = sweep(sweep(x$CovMat$CovMat_RBC, MARGIN=1, FUN="*", STATS=1/x$Estimate[, "se_RBC"], check.margin = FALSE), MARGIN=2, FUN="*", STATS=1/x$Estimate[, "se_RBC"], check.margin = FALSE)
+        corrMat = sweep(sweep(x[[i]]$CovMat$CovMat_RBC, MARGIN=1, FUN="*", STATS=1/x[[i]]$Estimate[, "se_RBC"], check.margin = FALSE), MARGIN=2, FUN="*", STATS=1/x[[i]]$Estimate[, "se_RBC"], check.margin = FALSE)
         normalSimu = try(
           MASS::mvrnorm(n=CIsimul, mu=rep(0,nrow(corrMat)), Sigma=Matrix::nearPD(corrMat)$mat),
           silent=TRUE)
@@ -763,9 +767,20 @@ plot.lpcde = function(..., alpha=NULL,type=NULL, lty=NULL, lwd=NULL, lcol=NULL,
     }
 
     # computing and saving lower and upper confidence interval values
-    # use RBC values for computation
-    data_x$CI_l = data_x$est_RBC - z_val * data_x$se_RBC
-    data_x$CI_r = data_x$est_RBC + z_val * data_x$se_RBC
+    if(rbc){
+      # use RBC values for computation
+      data_x$CI_l = data_x$est_RBC - z_val * data_x$se_RBC
+      data_x$CI_r = data_x$est_RBC + z_val * data_x$se_RBC
+    } else {
+      # use standard values for computation
+      data_x$CI_l = data_x$est - z_val * data_x$se
+      data_x$CI_r = data_x$est + z_val * data_x$se
+    }
+    # valid estimates
+    n_suff = 30
+    suff_idx = x[[i]]$eff_n<n_suff
+    data_x$CI_l[suff_idx] = 0
+    data_x$CI_r[suff_idx] = 0
 
     # adding legend information to dataset
     if (legend_default) {
@@ -867,7 +882,8 @@ plot.lpcde = function(..., alpha=NULL,type=NULL, lty=NULL, lwd=NULL, lcol=NULL,
     title <- ""
   }
 
-  temp_plot <- temp_plot + ggplot2::labs(x=xlabel, y=ylabel) + ggplot2::ggtitle(title)
+  temp_plot <- temp_plot + ggplot2::labs(x=xlabel, y=ylabel) + ggplot2::ggtitle(title) +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
 
   # check plotting range vs estimation range
   if (!is.null(y_grid)) {

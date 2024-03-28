@@ -2,7 +2,7 @@
 % Please edit documentation in R/lpcde.R
 \name{lpcde}
 \alias{lpcde}
-\title{Local Polynomial Conditional Density Estimation}
+\title{Local polynomial conditional density estimation}
 \usage{
 lpcde(
   x_data,
@@ -62,13 +62,13 @@ distribution function to be estimated. Default value is \code{0}.}
 
 \item{rbc}{Boolean. TRUE (default) for rbc calcuations, required for valid uniform inference.}
 
-\item{ng}{int. number of grid points to be used. generates evenly space points over the support of the data.}
+\item{ng}{Int, number of grid points to be used. generates evenly space points over the support of the data.}
 
-\item{normalize}{Boolean. False (default) returns original estimator, True normalizes estimates to integrate to 1.}
+\item{normalize}{Boolean, False (default) returns original estimator, True normalizes estimates to integrate to 1.}
 
-\item{nonneg}{Boolean. False (default) returns original estimator, True returns maximum of estimate and 0.}
+\item{nonneg}{Boolean, False (default) returns original estimator, True returns maximum of estimate and 0.}
 
-\item{grid_spacing}{String. If equal to "quantile" will generate quantile-spaced grid evaluation points, otherwise will generate equally spaced points.}
+\item{grid_spacing}{String, If equal to "quantile" will generate quantile-spaced grid evaluation points, otherwise will generate equally spaced points.}
 
 \item{kernel_type}{String, specifies the kernel function, should be one of
 \code{"triangular"}, \code{"uniform"}, and \code{"epanechnikov"}(default).}
@@ -90,7 +90,7 @@ bandwidth selected for each grid point)}
 \description{
 \code{\link{lpcde}} implements the local polynomial regression based
 conditional density (and derivatives). The estimator proposed in
-Chandak, Cattaneo, Jansson and Ma.
+\insertCite{bernoulli}{lpcde}.
 Robust bias-corrected inference methods, both pointwise (confidence intervals) and
 uniform (confidence bands), are also implemented.
 }
@@ -117,6 +117,28 @@ of the confidence intervals/bands, which can happen if the underlying distributi
 high curvature at some evaluation point(s). One possible solution in this case is to
 increase the polynomial order \code{p} or to employ a smaller bandwidth.
 }
+\examples{
+#Density estimation example
+n=500
+x_data = matrix(rnorm(n, mean=0, sd=1))
+y_data = matrix(rnorm(n, mean=x_data, sd=1))
+y_grid = seq(from=-1, to=1, length.out=5)
+model1 = lpcde::lpcde(x_data=x_data, y_data=y_data, y_grid=y_grid, x=0, bw=0.5)
+#summary of estimation
+summary(model1)
+
+}
+\references{
+\insertRef{bernoulli}{lpcde}\cr
+\insertRef{JASA}{lpcde}\cr
+\insertRef{rbc}{lpcde}\cr
+\insertRef{lpdensitypaper}{lpcde}
+}
+\seealso{
+Supported methods: \code{\link{coef.lpcde}}, \code{\link{confint.lpcde}},
+\code{\link{plot.lpcde}}, \code{\link{print.lpcde}},
+\code{\link{summary.lpcde}}, \code{\link{vcov.lpcde}}
+}
 \author{
 Matias D. Cattaneo, Princeton University. \email{cattaneo@princeton.edu}.
 
@@ -125,8 +147,4 @@ Rajita Chandak (maintainer), Princeton University. \email{rchandak@princeton.edu
 Michael Jansson, University of California Berkeley. \email{mjansson@econ.berkeley.edu}.
 
 Xinwei Ma, University of California San Diego. \email{x1ma@ucsd.edu}.
-
-Supported methods: \code{\link{coef.lpcde}}, \code{\link{confint.lpcde}},
-\code{\link{plot.lpcde}}, \code{\link{print.lpcde}},
-\code{\link{summary.lpcde}}, \code{\link{vcov.lpcde}}
 }
