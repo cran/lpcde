@@ -1,6 +1,6 @@
-2b024ed808358071f48ac49c1f2a86ef *DESCRIPTION
+066922f039d90e78378e6efbcb2adb50 *DESCRIPTION
 ec5680298a8f178fa8f2524c4da2a71c *NAMESPACE
-5b36e724fcc1262ad244112e98718be2 *NEWS.md
+8eb34e995cce31bd452d9997fb303bd1 *NEWS.md
 3b0ad25174679fbb01e2a4e94c6924d2 *R/RcppExports.R
 dbe122b1e786d8acc07575ec785dab2d *R/lpbwcde.R
 ca966afca435b930d2226a59bfe3d5d6 *R/lpbwcde_fns.R
@@ -8,11 +8,11 @@ ca966afca435b930d2226a59bfe3d5d6 *R/lpbwcde_fns.R
 4b04849bbfdb773af41d4dc030a3b131 *R/lpcde-package.R
 580bb75e4d4ce8d189a416c9f9e31ced *R/lpcde.R
 935d8231f091db82f7ab20231b1c35cb *R/lpcde_fns.R
-0561d41e16fbad4c0d4016b396e700b8 *R/lpcde_methods.R
+9abfa02ff062fc2f493724f2dd61f2c3 *R/lpcde_methods.R
 f808c06a37566c5d8db6767ec472f3ae *R/matrices.R
 80697c175b3b78db2b1939d421634f1d *R/utils.R
 3c1e379a8bd6389d5d3d49cde2afd56f *README.md
-d8bff2c69d724fab012284ae2b11aea7 *build/partial.rdb
+424323656d69aeb309356e16afeb48f0 *build/partial.rdb
 e76c674009d6ace7f985bf79bcb75e39 *inst/REFERENCES.bib
 63b757dd4560acb4ee1749fa735169f5 *man/S_exact.Rd
 abaddf55ef28056ae55a45bd96bf7142 *man/S_x.Rd
@@ -28,7 +28,7 @@ c4215cca7cb78851ac875b60fd5d66ef *man/c_x.Rd
 45b898be4b5291db31ac6a956c4d62b4 *man/check_inv.Rd
 3594dbda3b36abf881aa5deea904f554 *man/coef.lpbwcde.Rd
 dfad5f295fc792ed0e52ca8e0878ab4d *man/coef.lpcde.Rd
-eac7c92bfc4a338a42fb29a61978ada7 *man/confint.lpcde.Rd
+55b3fa10a63bfe3b4e67fc833b8d2dee *man/confint.lpcde.Rd
 2b40ca79a68e4094c5fefa9e6b98aae3 *man/cov_hat.Rd
 f53005651a554f363da7fb026bd2f98c *man/fhat.Rd
 77cbf725cafeb012ad99edb9279628d8 *man/int_val.Rd
