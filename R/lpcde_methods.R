@@ -266,7 +266,7 @@ summary.lpcde = function(object, ...){
 #'
 #' @export
 coef.lpcde = function(object, ...) {
-  object$Estimate
+  object$Estimate[,c(1,3)]
 }
 #######################################################################################
 #' Vcov method for local polynomial density conditional estimation
@@ -465,19 +465,19 @@ confint.lpcde <- function(object, parm = NULL, level=0.95, CIuniform=FALSE, CIsi
 #' they will be applied to each data series accordingly.
 #' @param lty Line type for point estimates, only effective if \code{type} is \code{"line"} or
 #'   \code{"both"}. \code{1} for solid line, \code{2} for dashed line, \code{3} for dotted line.
-#'   For other options, see the instructions for \code{\link{ggplot2}} . If
+#'   For other options, see the instructions for \code{ggplot2} . If
 #'   more than one is provided, they will be applied to each data series accordingly.
 #' @param lwd Line width for point estimates, only effective if \code{type} is \code{"line"} or
 #'   \code{"both"}. Should be strictly positive. For other options, see the instructions for
-#'   \code{\link{ggplot2}} . If more than one is provided, they will be applied
+#'   \code{ggplot2} . If more than one is provided, they will be applied
 #'   to each data series accordingly.
 #' @param lcol Line color for point estimates, only effective if \code{type} is \code{"line"} or
 #'   \code{"both"}. \code{1} for black, \code{2} for red, \code{3} for green, \code{4} for blue.
-#'   For other options, see the instructions for \code{\link{ggplot2}} . If
+#'   For other options, see the instructions for \code{ggplot2} . If
 #'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param pty Scatter plot type for point estimates, only effective if \code{type} is \code{"points"} or
-#'   \code{"both"}. For options, see the instructions for \code{\link{ggplot2}} . If
+#'   \code{"both"}. For options, see the instructions for \code{ggplot2} . If
 #'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param pwd Scatter plot size for point estimates, only effective if \code{type} is \code{"points"} or
@@ -486,7 +486,7 @@ confint.lpcde <- function(object, parm = NULL, level=0.95, CIuniform=FALSE, CIsi
 #' @param pcol Scatter plot color for point estimates, only effective if \code{type} is \code{"points"} or
 #'   \code{"both"}. \code{1} for black, \code{2} for red, \code{3}
 #'   for green, \code{4} for blue.
-#'   For other options, see the instructions for \code{\link{ggplot2}} . If
+#'   For other options, see the instructions for \code{ggplot2} . If
 #'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param y_grid Numeric vector, specifies a subset of grid points
@@ -508,7 +508,7 @@ confint.lpcde <- function(object, parm = NULL, level=0.95, CIuniform=FALSE, CIsi
 #'   accordingly.
 #' @param CIcol Color of the confidence region. \code{1} for black, \code{2} for red, \code{3}
 #'   for green, \code{4} for blue.
-#'   For other options, see the instructions for \code{\link{ggplot2}} . If
+#'   For other options, see the instructions for \code{ggplot2} . If
 #'   more than one is provided, they will be applied to each data series
 #'   accordingly.
 #' @param title,xlabel,ylabel Strings, specifies the title of the plot and labels for the x- and y-axis.
@@ -812,7 +812,7 @@ plot.lpcde = function(..., alpha=NULL,type=NULL, lty=NULL, lwd=NULL, lcol=NULL,
     if (type[i]%in%c("line", "both")) {
       temp_plot = temp_plot + ggplot2::geom_line(data=data_x,
                                                  ggplot2::aes(x=y_grid, y=est, colour=Sname,
-                                                              linetype=Sname), size=lwd[i])
+                                                              linetype=Sname), linewidth=lwd[i])
     }
 
     ########################################
@@ -820,7 +820,7 @@ plot.lpcde = function(..., alpha=NULL,type=NULL, lty=NULL, lwd=NULL, lcol=NULL,
     if (type[i]%in%c("points", "both") & !is.null(plotIndex)) {
       temp_plot = temp_plot + ggplot2::geom_point(data=data_x[plotIndex, ],
                                                   ggplot2::aes(x=y_grid, y=est, colour=Sname,
-                                                               shape=Sname), size=pwd[i])
+                                                               shape=Sname), linewidth=pwd[i])
     }
 
     if (type[i] == "line") {
